@@ -1,0 +1,6 @@
+{
+  "appId": "com.dua.app",
+  "appName": "dua",
+  "webDir": "dist",
+  "bundledWebRuntime": false
+}
