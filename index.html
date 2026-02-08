@@ -1,30 +1,174 @@
+
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <title>Ionic App</title>
-    
-    <base href="/" />
-    
-    <meta name="color-scheme" content="light dark" />
-    <meta
-      name="viewport"
-      content="viewport-fit=cover, width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"
-    />
-    <meta name="format-detection" content="telephone=no" />
-    <meta name="msapplication-tap-highlight" content="no" />
-    
-    <link rel="manifest" href="/manifest.json" />
-    
-    <link rel="shortcut icon" type="image/png" href="/favicon.png" />
-    
-    <!-- add to homescreen for ios -->
-    <meta name="mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-title" content="Ionic App" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<title>Duaa App</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="manifest" href="manifest.json">
+<style>
+body {
+  margin: 0;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #f3f3f3;
+  font-family: Arial, sans-serif;
+  overflow: hidden;
+  transition: background 0.3s ease;
+}
+
+.card {
+  width: min(380px, 90vw);
+  min-height: 500px;
+  max-height: 600px;
+  background: white;
+  border-radius: 30px;
+  box-shadow: 0 20px 45px rgba(0,0,0,0.2);
+  padding: 30px;
+  text-align: center;
+  line-height: 2;
+  user-select: none;
+  touch-action: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.5s cubic-bezier(0.25,0.46,0.45,0.94), opacity 0.5s ease;
+  direction: rtl;
+  position: absolute;
+  overflow-y: auto;
+  font-size: 18px;
+}
+
+button {
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  padding: 10px 20px;
+  font-size: 18px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  background: #ffd36a;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+#prevBtn { left: 10px; }
+#nextBtn { right: 10px; }
+</style>
+</head>
+<body>
+
+<div id="card" class="card"></div>
+
+
+<script>
+// ================== DUAA DATA ==================
+const duaas = [
+  `هب لي من لدنك رحاب زوجة صالحة، واجعل بيننا المودّة والرّحمة والسّكن، فأنت على كلّ شيء قدير، يا من قلت للشيء كن فيكون، ربّنا آتنا في الدّنيا حسنة وفي الآخرة حسنة وقنا عذاب النّار، وصلّ اللهمّ على سيّدنا محمّد وعلى آله وصحبه وسلم.`,
+  `اللهم إنا نسألك موجبات رحمتك، وعزائم مغفرتك، والسلامة من كل إثم، والغنيمة من كل بر، والفوز بالجنة، والنجاة من النار.`,
+  `اللهم إني أسألك من الخير كله عاجله وآجله، ما علمت منه وما لم أعلم، وأعوذ بك من الشر كله عاجله وآجله، ما علمت منه وما لم أعلم. اللهم إني أسألك من خير ما سألك عبدك ونبيك، وأعوذ بك من شر ما استعاذ بك منه عبدك ونبيك. اللهم إني أسألك الجنة وما قرب إليها من قول أو عمل، وأعوذ بك من النار وما قرب إليها من قول أو عمل، وأسألك أن تجعل كل قضاء قضيته لي خيرا.`,
+  `رب أعني ولا تعن علي، وانصرني ولا تنصر علي، وامكر لي ولا تمكر علي، واهدني ويسر الهدى إلي، وانصرني على من بغى علي، رب اجعلني لك شكارا، لك ذكارا، لك رهابا، لك مطواعا، إليك مخبتا أواها منيبا، رب تقبل توبتي، واغسل حوبتي، وأجب دعوتي، وثبت حجتي، واهد قلبي، وسدد لساني، واسلل سخيمة قلبي.`,
+  `اللهم أصلح لي ديني الذي هو عصمة أمري، وأصلح لي دنياي التي فيها معاشي، وأصلح لي آخرتي التي فيها معادي، واجعل الحياة زيادة لي في كل خير، واجعل الموت راحة لي من كل شر.`,
+  `اللهم إني أعوذ بك من العجز، والكسل، والجبن، والبخل، والهرم، وعذاب القبر، اللهم آت نفسي تقواها، وزكها أنت خير من زكاها، أنت وليها ومولاها، اللهم إني أعوذ بك من علم لا ينفع، ومن قلب لا يخشع، ومن نفس لا تشبع، ومن دعوة لا يستجاب لها.`,
+  `اللهم آتنا في الدنيا حسنة، وفي الآخرة حسنة وقنا عذاب النار.`,
+  `يا ربنا لك الحمد كما ينبغي لجلال وجهك وعظيم سلطانك.`,
+  `سبحان الله وبحمده عدد خلقه ورضا نفسه وزنة عرشه ومداد كلماته.`,
+  `اللهم إني أسألك حبك وحب من يحبك وحب كل عمل يقربني إلى حبك، اللهم اجعل حبك أحب إليَّ من نفسي وأهلي ومالي وولدي.`,
+  `اللهم لا تدع لنا ذنبا إلا غفرته، ولا هما إلا فرجته، ولا دينا إلا قضيته، ولا مريضا إلا شفيته، ولا مبتلى إلا عافيته.`,
+  `اللهم يا مقلب القلوب ثبت قلبي على دينك، ولا تزغ قلبي بعد إذ هديتني.`,
+  `لا إله إلا أنت سبحانك إني كنت من الظالمين.`
+];
+
+// ================== STATE ==================
+let index = 0;
+const card = document.getElementById("card");
+
+function render() {
+  card.innerText = duaas[index];
+  adjustFont();
+}
+
+// Adjust font size for long duaas
+function adjustFont() {
+  if(card.scrollHeight > card.clientHeight) card.style.fontSize = '16px';
+  else card.style.fontSize = '18px';
+}
+
+render();
+
+// ================== SWIPE ==================
+let startX = 0, currentX = 0, dragging = false;
+
+card.addEventListener("pointerdown", e => {
+  startX = e.clientX;
+  dragging = true;
+  card.setPointerCapture(e.pointerId);
+});
+
+card.addEventListener("pointermove", e => {
+  if(!dragging) return;
+  currentX = e.clientX - startX;
+  card.style.transform = `translateX(${currentX}px) rotate(${currentX/18}deg)`;
+  if(currentX > 0) document.body.style.background = "linear-gradient(135deg,#fff1a8,#ffd36a)";
+  else if(currentX < 0) document.body.style.background = "linear-gradient(135deg,#a8d1ff,#6ac8ff)";
+  else document.body.style.background = "#f3f3f3";
+});
+
+card.addEventListener("pointerup", () => {
+  dragging = false;
+  if(currentX > 140) swipeNext();
+  else if(currentX < -140) swipePrev();
+  else resetCard();
+});
+
+// ================== HELPERS ==================
+function swipeNext() {
+  animateSwipe(600, 25);
+  index = (index+1) % duaas.length;
+  setTimeout(resetAfterSwipe.bind(null,-600,-25),350);
+}
+
+function swipePrev() {
+  animateSwipe(-600,-25);
+  index = (index-1 + duaas.length) % duaas.length;
+  setTimeout(resetAfterSwipe.bind(null,600,25),350);
+}
+
+function animateSwipe(x, rot){
+  card.style.transition = "transform 0.5s cubic-bezier(0.25,0.46,0.45,0.94), opacity 0.5s ease";
+  card.style.transform = `translateX(${x}px) rotate(${rot}deg)`;
+  card.style.opacity = 0;
+}
+
+function resetAfterSwipe(startX,startRot){
+  card.style.transition = "none";
+  card.style.opacity = 1;
+  card.style.transform = `translateX(${startX}px) rotate(${startRot}deg)`;
+  render();
+  requestAnimationFrame(()=>{
+    card.style.transition = "transform 0.5s cubic-bezier(0.25,0.46,0.45,0.94), opacity 0.5s ease";
+    card.style.transform = "translateX(0) rotate(0)";
+    document.body.style.background = "#f3f3f3";
+  });
+}
+
+function resetCard(){
+  card.style.transition = "transform 0.3s ease";
+  card.style.transform = "translateX(0) rotate(0)";
+  document.body.style.background = "#f3f3f3";
+}
+
+
+// Click does nothing
+card.addEventListener("click", e => e.preventDefault());
+
+// ================== REGISTER SERVICE WORKER ==================
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('sw.js').catch(err => console.log(err));
+}
+</script>
+
+</body>
 </html>
